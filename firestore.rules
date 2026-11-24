@@ -1,0 +1,10 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Each household is reachable only by its unguessable 22-char ID (shared via invite link).
+    // No `list`, so nobody can enumerate households. No `delete`, so nothing can be wiped remotely.
+    match /households/{householdId}/{document=**} {
+      allow get, create, update: if request.auth != null && householdId.size() >= 20;
+    }
+  }
+}
